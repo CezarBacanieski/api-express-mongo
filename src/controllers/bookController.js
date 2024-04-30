@@ -1,4 +1,5 @@
 import book from "../models/book.js";
+import { author } from "../models/author.js";
 
 class BookController {
   static async listBook(req, res) {
@@ -23,8 +24,11 @@ class BookController {
   }
 
   static async registerBook(req, res) {
+    const newBook = req.body;
     try {
-      const newBook = await book.create(req.body);
+      const findOutAuthor = await author.findById(newBook.author);
+      const completBook = { ...newBook, author: { ...findOutAuthor._doc } };
+      const createdBook = await book.create();
       res
         .status(201)
         .json({ message: "Book cadastred with succed", book: newBook });
@@ -54,6 +58,16 @@ class BookController {
       res
         .status(500)
         .json({ message: `${e.message} - fail in delete the book` });
+    }
+  }
+
+  static async listBookForPublishier(req, res) {
+    const publishier = req.query.publishier;
+    try {
+      const booksForPublishier = await book.find({ publishier: publishier });
+      res.status(200).json(booksForPublishier);
+    } catch (e) {
+      res.status(500).json({ message: `${e.message} - fail in the search ` });
     }
   }
 }

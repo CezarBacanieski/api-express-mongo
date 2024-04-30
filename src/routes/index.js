@@ -1,5 +1,6 @@
 import express from "express";
 import books from "./booksRoutes.js";
+import authors from "./authorsRoutes.js";
 
 const routes = (app) => {
   app
@@ -7,7 +8,7 @@ const routes = (app) => {
     .get((req, res) =>
       res.status(200).send("Course of Node.js and express and MongoDB")
     );
-  app.use(express.json(), books);
+  app.use(express.json(), books, authors);
 };
 
 export default routes;
